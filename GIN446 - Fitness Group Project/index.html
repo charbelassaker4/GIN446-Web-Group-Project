@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DreamFIT — Fitness Companion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="fitness site front/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="logo">Dream<span>FIT</span></div>
+      <nav class="main-nav">
+        <a href="index.html" class="active">Home</a>
+        <a href="fitness site front/bmi.html">BMI</a>
+        <a href="fitness site front/bodyfat.html">Body Fat %</a>
+        <a href="fitness site front/workout.html">Workouts</a>
+        <a href="fitness site front/nutrition.html">Nutrition</a>
+        <a href="fitness site front/muscle-composition.html">Muscle Viewer</a>
+        <a href="fitness site front/profile.html">Profile</a>
+        <button id="logout-btn" class="pill-btn">Logout</button>
+        <script type="module" src="../firebase/signout.js"></script>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-text">
+          <h1>Reach your <span>dream physique</span> with DreamFIT</h1>
+          <p>
+            Our project focuses on a fitness website that helps users achieve
+            their physical goals. DreamFIT gives you personalized gym split
+            schedules, BMI/Body Fat % calculators, and a nutrition section with
+            food and calorie information.
+          </p>
+          <div class="hero-actions">
+            <a href="fitness site front/workout.html" class="btn primary"
+              >Explore workout splits</a
+            >
+            <a href="fitness site front/bmi.html" class="btn ghost">Calculate your BMI</a>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-card">
+            <span class="stat-number" id="stat-workouts">30+</span>
+            <span class="stat-label">Workout ideas</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">3</span>
+            <span class="stat-label">Goal modes (Cut / Bulk / Maintain)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">Daily</span>
+            <span class="stat-label">Nutrition tracking</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="feature-grid">
+        <article class="feature-card">
+          <h2>Personalized gym splits</h2>
+          <p>
+            Choose between 3-day, 4-day, or 5-day splits. Home and gym versions
+            are available so you can train anywhere.
+          </p>
+          <a href="fitness site front/workout.html" class="feature-link">View sample plans →</a>
+        </article>
+
+        <article class="feature-card">
+          <h2>Muscle composition</h2>
+          <p>
+            Learn how your body’s major muscle groups work with a visual muscle map designed to help you train smarter.
+          </p>
+          <a href="fitness site front/muscle-composition.html" class="feature-link">View muscle map →</a>
+        </article>
+
+        <article class="feature-card">
+          <h2>Smart nutrition helper</h2>
+          <p>
+            A simple nutrition library with calories and categories: protein
+            sources, snacks, fruits, and more. Perfect for building basic meal
+            plans.
+          </p>
+          <a href="fitness site front/nutrition.html" class="feature-link">Explore foods →</a>
+        </article>
+      </section>
+
+      <!-- How it works -->
+      <section class="how-it-works">
+        <h2>How DreamFIT works</h2>
+        <ol>
+          <li><strong>Sign up / log in</strong> on the backend portal.</li>
+          <li>
+            <strong>Check your BMI/Bodyfat%</strong> and understand your starting point.
+          </li>
+          <li>
+            <strong>Pick a workout split</strong> that matches your schedule and
+            goal.
+          </li>
+          <li>
+            <strong>Use the nutrition guide</strong> to choose smarter foods.
+          </li>
+          <li>
+            <strong>View Muscle Composition</strong> to understand your muscle groups better.
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        DreamFIT — Academic fitness web project • Built with HTML, CSS &amp;
+        JavaScript.
+      </p>
+    </footer>
+
+    <script src="fitness site front/app.js"></script>
+    <script type="module" src="../firebase/state_listener.js"></script>
+  </body>
+</html>
