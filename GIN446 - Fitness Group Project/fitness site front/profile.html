@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DreamFIT — Profile</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="../../firebase/state_listener.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="logo">Dream<span>FIT</span></div>
+    <nav class="main-nav">
+      <a href="../index.html">Home</a>
+      <a href="bmi.html">BMI</a>
+      <a href="bodyfat.html">Body Fat %</a>
+      <a href="workout.html">Workouts</a>
+      <a href="nutrition.html">Nutrition</a>
+      <a href="muscle-composition.html">Muscle Viewer</a>
+      <a href="profile.html" class="active">Profile</a>
+      <button id="logout-btn" class="pill-btn">Logout</button>
+      <script type="module" src="../../firebase/signout.js"></script>
+    </nav>
+  </header>
+
+  <main>
+    <div class="profile-container">
+      <div class="profile-left">
+        <img id="avatar" class="profile-avatar" src="https://ui-avatars.com/api/?name=User" alt="Profile Avatar"/>
+        <p id="logged-email" class="profile-email"></p>
+        <button id="edit-btn" class="btn primary btn-edit">Edit Profile</button>
+      </div>
+
+      <div class="profile-right">
+        <h2 class="section-title">Profile Information</h2>
+        <div id="profile-view" class="profile-details"></div>
+
+        <form id="profile-edit" class="form" style="display:none;">
+          <div class="field"><label>Age</label><input type="number" id="age" /></div>
+          <div class="field"><label>Weight (kg)</label><input type="number" id="weight" /></div>
+          <div class="field"><label>Height (cm)</label><input type="number" id="height" /></div>
+          <div class="field"><label>Workouts per week</label><input type="number" id="workouts" /></div>
+
+          <div class="field">
+            <label>Activity Level</label>
+            <select id="activity">
+              <option value="">Select...</option>
+              <option>Not very active</option>
+              <option>Lightly active</option>
+              <option>Active</option>
+              <option>Very active</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Goal</label>
+            <select id="goal">
+              <option value="">Select...</option>
+              <option>Lose weight</option>
+              <option>Maintain weight</option>
+              <option>Gain weight</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Sex</label>
+            <select id="sex">
+              <option value="">Select...</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+
+          <div class="field"><label>Date of Birth</label><input type="date" id="dob" /></div>
+          <div class="field"><label>Country</label><input type="text" id="country" /></div>
+
+          <button type="submit" class="btn primary full-width">Save Changes</button>
+        </form>
+
+        <div id="alert" class="alert" style="display: none"></div>
+      </div>
+    </div>
+  </main>
+
+<script type="module">
+import { auth } from "../../firebase/initialise.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const profileView = document.getElementById("profile-view");
+const profileEdit = document.getElementById("profile-edit");
+const editBtn = document.getElementById("edit-btn");
+const alertBox = document.getElementById("alert");
+
+let userData = {};
+let userEmail = "";
+
+// ================= AUTH =================
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  userEmail = user.email;
+  document.getElementById("logged-email").textContent = "Logged in as: " + userEmail;
+  document.getElementById("avatar").src =
+    "https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=" + (user.displayName || user.email);
+
+  loadUserFromServer();
+});
+
+// ================= GET USER FROM SERVER =================
+function loadUserFromServer() {
+  fetch("profile.php?email=" + encodeURIComponent(userEmail))
+    .then(res => res.text())
+    .then(xmlText => {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(xmlText, "text/xml");
+      const userNode = xml.querySelector("user");
+
+      if (!userNode) {
+        alertBox.textContent = "Could not load user data.";
+        alertBox.style.display = "block";
+        return;
+      }
+
+      userData = {
+        age: userNode.querySelector("age")?.textContent || "",
+        weight: userNode.querySelector("weight")?.textContent || "",
+        height: userNode.querySelector("height")?.textContent || "",
+        workouts: userNode.querySelector("workouts_per_week")?.textContent || "",
+        activity: userNode.querySelector("activity_level")?.textContent || "",
+        goal: userNode.querySelector("goal")?.textContent || "",
+        sex: userNode.querySelector("sex")?.textContent || "",
+        dob: userNode.querySelector("date_of_birth")?.textContent || "",
+        country: userNode.querySelector("country")?.textContent || ""
+      };
+
+      renderViewMode();
+    });
+}
+
+// ================= VIEW MODE =================
+function renderViewMode() {
+  profileView.innerHTML = `
+    <p><strong>Age:</strong> ${userData.age || "N/A"}</p>
+    <p><strong>Weight:</strong> ${userData.weight || "N/A"} kg</p>
+    <p><strong>Height:</strong> ${userData.height || "N/A"} cm</p>
+    <p><strong>Workouts:</strong> ${userData.workouts || "N/A"}</p>
+    <p><strong>Activity:</strong> ${userData.activity || "N/A"}</p>
+    <p><strong>Goal:</strong> ${userData.goal || "N/A"}</p>
+    <p><strong>Sex:</strong> ${userData.sex || "N/A"}</p>
+    <p><strong>DOB:</strong> ${userData.dob || "N/A"}</p>
+    <p><strong>Country:</strong> ${userData.country || "N/A"}</p>
+  `;
+
+  profileView.style.display = "block";
+  profileEdit.style.display = "none";
+}
+
+// ================= EDIT MODE =================
+editBtn.addEventListener("click", () => {
+  profileView.style.display = "none";
+  profileEdit.style.display = "block";
+
+  document.getElementById("age").value = userData.age;
+  document.getElementById("weight").value = userData.weight;
+  document.getElementById("height").value = userData.height;
+  document.getElementById("workouts").value = userData.workouts;
+  document.getElementById("activity").value = userData.activity;
+  document.getElementById("goal").value = userData.goal;
+  document.getElementById("sex").value = userData.sex;
+  document.getElementById("dob").value = userData.dob;
+  document.getElementById("country").value = userData.country;
+});
+
+// ================= SAVE CHANGES (XML POST) =================
+profileEdit.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const body = {
+    email: userEmail,
+    age: Number(document.getElementById("age").value),
+    weight: Number(document.getElementById("weight").value),
+    height: Number(document.getElementById("height").value),
+    workouts: Number(document.getElementById("workouts").value),
+    activity: document.getElementById("activity").value,
+    goal: document.getElementById("goal").value,
+    sex: document.getElementById("sex").value,
+    dob: document.getElementById("dob").value,
+    country: document.getElementById("country").value
+  };
+
+  fetch("profile.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  })
+  .then(res => res.text())               // ← READ RESPONSE AS XML
+  .then(xmlText => {
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(xmlText, "text/xml");
+
+    const status = xml.querySelector("status")?.textContent;
+    const message = xml.querySelector("message")?.textContent;
+
+    if (status === "success") {
+      alertBox.textContent = "Profile updated!";
+      alertBox.style.display = "block";
+      loadUserFromServer();
+    } else {
+      alertBox.textContent = "Error updating profile: " + (message || "");
+      alertBox.style.display = "block";
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alertBox.textContent = "Connection error.";
+    alertBox.style.display = "block";
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DreamFIT — Workouts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="../../firebase/state_listener.js"></script>
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="logo">Dream<span>FIT</span></div>
+      <nav class="main-nav">
+        <a href="../index.html">Home</a>
+        <a href="bmi.html">BMI</a>
+        <a href="bodyfat.html">Body Fat %</a>
+        <a href="workout.html" class="active">Workouts</a>
+        <a href="nutrition.html">Nutrition</a>
+        <a href="muscle-composition.html">Muscle Viewer</a>
+        <a href="profile.html">Profile</a>
+        <button id="logout-btn" class="pill-btn">Logout</button>
+        <script type="module" src="../../firebase/signout.js"></script>
+      </nav>
+    </header>
+
+    <main class="page-wide">
+      <h1>Workout Programs & Exercise Library</h1>
+      <p class="page-intro">
+        Choose a plan or browse exercises with GIF demonstrations.
+      </p>
+
+      <!-- INTERNAL MINI NAV -->
+      <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem">
+        <button class="btn ghost" id="tab-workouts">Workout Plans</button>
+        <button class="btn ghost" id="tab-exercises">Exercise List</button>
+      </div>
+
+      <!-- ========================= -->
+      <!--      WORKOUT PLANS       -->
+      <!-- ========================= -->
+      <section id="plans-section" class="card-section">
+        <h2>Training Programs</h2>
+        <p class="small-muted">
+          Structured routines for Cut, Maintain, and Bulk.
+        </p>
+
+        <div class="split-grid" style="margin-top: 1rem">
+          <!-- CUT -->
+          <article class="split-card">
+            <h2>Cut Program (5 days/week)</h2>
+            <p class="tagline">
+              Higher reps, short rest, calorie deficit support.
+            </p>
+            <ul>
+              <li>
+                <strong>Day 1 – Upper A:</strong> Bench 4×12, Rows 4×15,
+                Shoulder press 3×12, Curls 3×15, Triceps 3×15
+              </li>
+              <li>
+                <strong>Day 2 – Lower A:</strong> Squats 4×15, RDL 4×12, Lunges
+                3×15, Leg press 3×20, Calves 4×20
+              </li>
+              <li>
+                <strong>Day 3 – HIIT/Cardio:</strong> Burpees, mountain
+                climbers, jumping jacks
+              </li>
+              <li>
+                <strong>Day 4 – Upper B:</strong> Incline bench 4×12, Pulldown
+                4×15, Lateral raises 4×15, Hammer curls 3×12, Dips 3×12
+              </li>
+              <li>
+                <strong>Day 5 – Lower B:</strong> Leg press 4×15, Front Squat
+                3×12, Hamstring curls 4×15, Abs circuit
+              </li>
+            </ul>
+          </article>
+
+          <!-- MAINTAIN -->
+          <article class="split-card">
+            <h2>Maintain Program (3–4 days/week)</h2>
+            <p class="tagline">Balanced training with moderate intensity.</p>
+            <ul>
+              <li>
+                <strong>Day 1 – Full Body A:</strong> Squat 3×8, Bench 3×10, Row
+                3×10, OHP 3×8
+              </li>
+              <li>
+                <strong>Day 2 – Full Body B:</strong> Deadlift 3×5, Pulldown
+                3×12, Dip 3×10, Leg press 3×12
+              </li>
+              <li>
+                <strong>Day 3 – Full Body C:</strong> Incline 3×10, RDL 3×8,
+                Rear delts 3×15, Curls 3×12
+              </li>
+              <li>
+                <strong>Optional Day 4 – Conditioning:</strong> Sled pushes,
+                planks, farmer carries
+              </li>
+            </ul>
+          </article>
+
+          <!-- BULK -->
+          <article class="split-card">
+            <h2>Bulk Program (Push/Pull/Legs/Upper/Lower)</h2>
+            <p class="tagline">High volume, progressive overload.</p>
+            <ul>
+              <li>
+                <strong>Day 1 – Push:</strong> Bench 5×5, OHP 4×6, Dips 3×10,
+                Lateral raises 4×15
+              </li>
+              <li>
+                <strong>Day 2 – Pull:</strong> Deadlift 5×5, Barbell rows 4×8,
+                Face pulls 3×15, Curls 3×12
+              </li>
+              <li>
+                <strong>Day 3 – Legs:</strong> Squat 5×5, Leg press 4×10, RDL
+                4×8, Calves 4×15
+              </li>
+              <li>
+                <strong>Day 4 – Upper Hypertrophy:</strong> Incline bench 4×10,
+                Pulldown 4×12, Chest fly 3×12, Rear delts 3×15
+              </li>
+              <li>
+                <strong>Day 5 – Lower Hypertrophy:</strong> Hack squat 4×10,
+                Lunges 4×12, Hamstring curl 4×12, Abs circuit
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ========================= -->
+      <!--      EXERCISE LIST       -->
+      <!-- ========================= -->
+      <section id="exercise-section" class="card-section hidden">
+        <h2>Exercise Library</h2>
+        <p class="small-muted">
+          Full list of exercises with targeted muscle and description.
+        </p>
+
+        <div class="field" style="margin-top: 0.6rem">
+          <label>Search exercise</label>
+          <input id="search-ex" type="text" placeholder="e.g. squat, curl" />
+        </div>
+
+        <div class="field" style="margin-top: 0.4rem">
+          <label>Filter by muscle</label>
+          <select id="filter-muscle">
+            <option value="">All</option>
+            <option value="abdominals">Abdominals</option>
+            <option value="abductors">Abductors</option>
+            <option value="adductors">Adductors</option>
+            <option value="biceps">Biceps</option>
+            <option value="calves">Calves</option>
+            <option value="chest">Chest</option>
+            <option value="forearms">Forearms</option>
+            <option value="glutes">Glutes</option>
+            <option value="hamstrings">Hamstrings</option>
+            <option value="lats">Lats</option>
+            <option value="lower_back">Lower Back</option>
+            <option value="middle_back">Middle Back</option>
+            <option value="neck">Neck</option>
+            <option value="quadriceps">Quadriceps</option>
+            <option value="traps">Traps</option>
+            <option value="triceps">Triceps</option>
+          </select>
+        </div>
+
+        <div id="exercise-list" class="table-wrapper" style="margin-top: 1rem">
+          <p class="small-muted">Loading exercises…</p>
+        </div>
+      </section>
+
+      
+    </main>
+
+    <footer class="site-footer">
+      <p>Exercises are loaded from an open-source database.</p>
+    </footer>
+
+    <script>
+      // ===================== TAB SWITCHING =====================
+      const tabWorkouts = document.getElementById("tab-workouts");
+      const tabExercises = document.getElementById("tab-exercises");
+      const plansSection = document.getElementById("plans-section");
+      const exerciseSection = document.getElementById("exercise-section");
+
+      function showWorkouts() {
+        plansSection.classList.remove("hidden");
+        exerciseSection.classList.add("hidden");
+        tabWorkouts.classList.add("primary");
+        tabExercises.classList.remove("primary");
+      }
+
+      function showExercises() {
+        exerciseSection.classList.remove("hidden");
+        plansSection.classList.add("hidden");
+        tabExercises.classList.add("primary");
+        tabWorkouts.classList.remove("primary");
+      }
+
+      tabWorkouts.onclick = showWorkouts;
+      tabExercises.onclick = showExercises;
+
+      // Default tab
+      showWorkouts();
+      // ===================== EXERCISE API (API NINJAS) =====================
+      const exerciseList = document.getElementById("exercise-list");
+      const searchInput = document.getElementById("search-ex");
+      const muscleFilter = document.getElementById("filter-muscle");
+
+      const API_KEY = "YOUR_API_KEY";
+
+      let allExercises = [];
+
+      const MUSCLE_GROUPS = [
+        "abdominals",
+        "abductors",
+        "adductors",
+        "biceps",
+        "calves",
+        "chest",
+        "forearms",
+        "glutes",
+        "hamstrings",
+        "lats",
+        "lower_back",
+        "middle_back",
+        "neck",
+        "quadriceps",
+        "traps",
+        "triceps",
+      ];
+
+      // Load exercises (All or specific muscle)
+      async function loadExercises() {
+        exerciseList.innerHTML =
+          "<p class='small-muted'>Loading exercises…</p>";
+
+        try {
+          let muscle = muscleFilter.value;
+          let results = [];
+
+          // -------------------------
+          // CASE 1: Filter = ALL
+          // -------------------------
+          if (!muscle || muscle === "") {
+            const responses = await Promise.all(
+              MUSCLE_GROUPS.map((m) =>
+                fetch(`https://api.api-ninjas.com/v1/exercises?muscle=${m}`, {
+                  headers: { "X-Api-Key": API_KEY },
+                }).then((res) => res.json())
+              )
+            );
+
+            // Flatten & merge
+            results = [].concat(...responses);
+
+            // Remove duplicates
+            results = Array.from(
+              new Map(results.map((ex) => [ex.name, ex])).values()
+            );
+
+            // Limit to avoid lag
+            allExercises = results.slice(0, 100);
+          }
+
+          // -------------------------
+          // CASE 2: Specific muscle
+          // -------------------------
+          else {
+            const res = await fetch(
+              `https://api.api-ninjas.com/v1/exercises?muscle=${muscle}`,
+              { headers: { "X-Api-Key": API_KEY } }
+            );
+            allExercises = await res.json();
+          }
+
+          renderExercises();
+        } catch (err) {
+          console.error(err);
+          exerciseList.innerHTML =
+            "<p class='small-muted'>Failed to load exercises.</p>";
+        }
+      }
+
+      // Render exercise cards
+      function renderExercises() {
+        const term = searchInput.value.toLowerCase();
+        const filtered = allExercises.filter((ex) =>
+          ex.name.toLowerCase().includes(term)
+        );
+
+        if (!filtered.length) {
+          exerciseList.innerHTML =
+            "<p class='small-muted'>No results found.</p>";
+          return;
+        }
+
+        const frag = document.createDocumentFragment();
+
+        filtered.forEach((ex) => {
+          const card = document.createElement("article");
+          card.className = "split-card";
+          card.style.marginBottom = "1rem";
+
+          card.innerHTML = `
+      <h2 style="font-size:1.1rem;">${ex.name}</h2>
+      <p class="small-muted">Muscle: ${ex.muscle}</p>
+      <p class="small-muted">Equipment: ${ex.equipment}</p>
+      <p class="small-muted">Difficulty: ${ex.difficulty}</p>
+      <p style="margin-top:0.5rem;">${ex.instructions}</p>
+    `;
+          frag.appendChild(card);
+        });
+
+        exerciseList.innerHTML = "";
+        exerciseList.appendChild(frag);
+      }
+
+      // Event listeners
+      searchInput.addEventListener("input", renderExercises);
+      muscleFilter.addEventListener("change", loadExercises);
+
+      // Initial load
+      loadExercises();
+    </script>
+  </body>
+</html>
